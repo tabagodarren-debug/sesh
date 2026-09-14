@@ -17,7 +17,9 @@ SESH is a focused desktop timer with a shareable, PNL-inspired interface. It tra
 ## Platform status
 
 - **Windows 11:** supported and packaged as an NSIS installer
-- **macOS 11+:** configured for Apple Silicon and Intel builds; CI compiles the application on macOS, but release signing, notarization, and hands-on validation on Apple hardware are still required
+- **macOS 11+:** Apple Silicon DMG releases are built on GitHub's macOS ARM64 runner. They use ad-hoc signing until Apple Developer signing and notarization are configured; hands-on validation on Apple hardware is still required
+
+Download published builds from the repository's [Releases](https://github.com/tabagodarren-debug/sesh/releases) page.
 
 Wallpaper Engine integration is Windows-only and remains hidden when Wallpaper Engine is unavailable. All other core timer, calendar, appearance, local media, and sharing features are designed to remain available on macOS.
 
