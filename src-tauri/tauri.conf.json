@@ -1,0 +1,61 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "SESH",
+  "version": "0.1.7",
+  "identifier": "com.sesh.timer",
+  "build": {
+    "beforeDevCommand": "npm run dev",
+    "devUrl": "http://127.0.0.1:1420",
+    "beforeBuildCommand": "npm run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [
+      {
+        "label": "main",
+        "title": "SESH",
+        "width": 840,
+        "height": 570,
+        "minWidth": 560,
+        "minHeight": 115,
+        "decorations": false,
+        "alwaysOnTop": true,
+        "visible": true,
+        "backgroundColor": "#0d0e10",
+        "center": true
+      },
+      {
+        "label": "config",
+        "title": "SESH Configuration",
+        "url": "index.html?view=config&panel=appearance",
+        "width": 600,
+        "height": 680,
+        "minWidth": 460,
+        "minHeight": 520,
+        "decorations": false,
+        "resizable": true,
+        "alwaysOnTop": true,
+        "skipTaskbar": true,
+        "visible": false,
+        "backgroundColor": "#0d0e11",
+        "center": true
+      }
+    ],
+    "security": {
+      "csp": "default-src 'self'; img-src 'self' asset: http://asset.localhost data: blob: https://th.wallhaven.cc; style-src 'self' 'unsafe-inline'; font-src 'self'; media-src 'self' asset: http://asset.localhost blob:; connect-src ipc: http://ipc.localhost; object-src 'none'; base-uri 'self'",
+      "assetProtocol": {
+        "enable": true,
+      "scope": ["$APPDATA/backgrounds/**/*", "$APPDATA/profile/**/*"]
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["nsis"],
+    "icon": ["icons/icon.png", "icons/icon.ico", "icons/icon.icns"],
+    "shortDescription": "A minimalist desktop focus timer",
+    "category": "Productivity",
+    "windows": { "nsis": { "displayLanguageSelector": false } },
+    "macOS": { "minimumSystemVersion": "11.0" }
+  }
+}
