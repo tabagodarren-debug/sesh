@@ -69,6 +69,9 @@ export function BackgroundLibrary({
   const [revision, setRevision] = useState(0);
   const [engine, setEngine] = useState<WallpaperEngineLibrary | null>(null);
   const [engineQuery, setEngineQuery] = useState("");
+  const [engineCategory, setEngineCategory] = useState<
+    "all" | "image" | "video"
+  >("all");
   const [engineLimit, setEngineLimit] = useState(60);
   const [engineOpening, setEngineOpening] = useState("");
   const sequence = useRef(0);
@@ -176,16 +179,38 @@ export function BackgroundLibrary({
       setEngineOpening("");
     }
   }
+  const compatibleEngineProjects = useMemo(
+    () =>
+      (engine?.projects ?? []).filter(
+        (project) =>
+          project.kind === "image" ||
+          project.kind === "video" ||
+          project.kind === "scene",
+      ),
+    [engine],
+  );
+  const engineCounts = useMemo(
+    () => ({
+      all: compatibleEngineProjects.length,
+      image: compatibleEngineProjects.filter(
+        (project) => project.kind !== "video",
+      ).length,
+      video: compatibleEngineProjects.filter(
+        (project) => project.kind === "video",
+      ).length,
+    }),
+    [compatibleEngineProjects],
+  );
   const engineProjects = useMemo(() => {
     const normalized = engineQuery.trim().toLocaleLowerCase();
-    return (engine?.projects ?? []).filter(
+    return compatibleEngineProjects.filter(
       (project) =>
-        (project.kind === "image" ||
-          project.kind === "video" ||
-          project.kind === "scene") &&
+        (engineCategory === "all" ||
+          (engineCategory === "video" && project.kind === "video") ||
+          (engineCategory === "image" && project.kind !== "video")) &&
         (!normalized || project.title.toLocaleLowerCase().includes(normalized)),
     );
-  }, [engine, engineQuery]);
+  }, [compatibleEngineProjects, engineCategory, engineQuery]);
   return (
     <Dialog title="Background library" onClose={onClose} wide standalone={standalone}>
       {(close) => (
@@ -305,11 +330,39 @@ export function BackgroundLibrary({
                 </p>
               </div>
             </div>
+            <div
+              className="engine-category-filter"
+              role="group"
+              aria-label="Filter Wallpaper Engine wallpapers by type"
+            >
+              {(
+                [
+                  ["all", "All"],
+                  ["image", "Images"],
+                  ["video", "Videos"],
+                ] as const
+              ).map(([value, label]) => (
+                <button
+                  type="button"
+                  key={value}
+                  aria-pressed={engineCategory === value}
+                  onClick={() => {
+                    setEngineCategory(value);
+                    setEngineLimit(60);
+                  }}
+                >
+                  <span>{label}</span>
+                  <small>{engineCounts[value]}</small>
+                </button>
+              ))}
+            </div>
             <label className="search-field">
               <Search size={16} />
               <input
                 aria-label="Search installed Wallpaper Engine projects"
-                placeholder={`Search ${engineProjects.length} compatible wallpapers…`}
+                placeholder={`Search ${engineCounts[engineCategory]} ${
+                  engineCategory === "all" ? "wallpapers" : engineCategory === "image" ? "images" : "videos"
+                }…`}
                 value={engineQuery}
                 onChange={(event) => {
                   setEngineQuery(event.target.value);
