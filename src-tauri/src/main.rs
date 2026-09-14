@@ -239,6 +239,18 @@ fn project_kind(value: Option<&str>, content: &Path) -> String {
     }
 }
 
+fn is_static_wallpaper_preview(path: &str) -> bool {
+    matches!(
+        Path::new(path)
+            .extension()
+            .and_then(|value| value.to_str())
+            .unwrap_or_default()
+            .to_ascii_lowercase()
+            .as_str(),
+        "png" | "jpg" | "jpeg" | "webp"
+    )
+}
+
 fn read_wallpaper_engine_project(
     directory: &Path,
     library_root: &Path,
@@ -349,7 +361,9 @@ fn wallpaper_engine_library(
             let Some(project) = read_wallpaper_engine_project(&directory, &root) else {
                 continue;
             };
-            if !matches!(project.kind.as_str(), "image" | "video") {
+            let compatible = matches!(project.kind.as_str(), "image" | "video")
+                || (project.kind == "scene" && is_static_wallpaper_preview(&project.preview_path));
+            if !compatible {
                 continue;
             }
             let _ = scope.allow_file(&project.preview_path);
@@ -853,5 +867,12 @@ mod tests {
         assert_eq!(project_kind(Some("Web"), Path::new("index.html")), "web");
         assert_eq!(project_kind(None, Path::new("still.webp")), "image");
         assert_eq!(project_kind(None, Path::new("unknown.bin")), "unknown");
+    }
+    #[test]
+    fn accepts_only_static_scene_previews() {
+        assert!(is_static_wallpaper_preview("preview.jpg"));
+        assert!(is_static_wallpaper_preview("preview.PNG"));
+        assert!(!is_static_wallpaper_preview("preview.gif"));
+        assert!(!is_static_wallpaper_preview("preview.mp4"));
     }
 }

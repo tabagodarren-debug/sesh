@@ -162,7 +162,9 @@ export function BackgroundLibrary({
       notify(
         project.kind === "video"
           ? "Live wallpaper applied."
-          : "Wallpaper Engine image applied.",
+          : project.kind === "scene"
+            ? "Static scene preview applied."
+            : "Wallpaper Engine image applied.",
       );
     } catch (e) {
       notify(
@@ -178,7 +180,9 @@ export function BackgroundLibrary({
     const normalized = engineQuery.trim().toLocaleLowerCase();
     return (engine?.projects ?? []).filter(
       (project) =>
-        (project.kind === "image" || project.kind === "video") &&
+        (project.kind === "image" ||
+          project.kind === "video" ||
+          project.kind === "scene") &&
         (!normalized || project.title.toLocaleLowerCase().includes(normalized)),
     );
   }, [engine, engineQuery]);
@@ -296,8 +300,8 @@ export function BackgroundLibrary({
               <div>
                 <strong>Installed Wallpaper Engine</strong>
                 <p className="hint">
-                  Only compatible image and video projects are shown. Videos
-                  play live inside SESH.
+                  Videos play live inside SESH. Scene wallpapers with a static
+                  preview are available as still backgrounds.
                 </p>
               </div>
             </div>
@@ -318,8 +322,8 @@ export function BackgroundLibrary({
                 <ImageOff />
                 <p>No compatible installed wallpapers.</p>
                 <small>
-                  Subscribe to a Video-type wallpaper in Wallpaper Engine,
-                  then reopen this library.
+                  Subscribe to a Video wallpaper or a Scene wallpaper with a
+                  static preview, then reopen this library.
                 </small>
               </div>
             ) : (
@@ -347,7 +351,9 @@ export function BackgroundLibrary({
                             <Film aria-hidden="true" />
                             {project.kind === "video"
                               ? "Live video"
-                              : "Static image"}
+                              : project.kind === "scene"
+                                ? "Static scene preview"
+                                : "Static image"}
                           </small>
                         </span>
                         {engineOpening === project.id && (
