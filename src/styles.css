@@ -1051,6 +1051,67 @@ dialog.standalone .dialog-head:active {
   margin: 16px 0;
 }
 
+.cursor-setting {
+  display: grid;
+  gap: 11px;
+  padding: 16px 0;
+  border-bottom: 1px solid #ffffff09;
+}
+
+.cursor-setting > span {
+  display: grid;
+  gap: 3px;
+  font-size: 12px;
+}
+
+.cursor-setting small {
+  color: #858893;
+  font-size: 10px;
+}
+
+.cursor-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.cursor-options button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  color: #a9abb4;
+  background: #111216;
+  border-color: #2b2e36;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.cursor-options button:hover {
+  color: #f3f2ff;
+  background: #181a20;
+  border-color: #4b4f5d;
+}
+
+.cursor-options button[aria-pressed="true"] {
+  color: #fff;
+  background: linear-gradient(180deg, #24283a, #191b24);
+  border-color: #8f99e9;
+  box-shadow: 0 0 0 1px #7785ff24 inset, 0 7px 20px #0004;
+}
+
+.cursor-options svg,
+.sesh-cursor-preview {
+  width: 18px;
+  height: 18px;
+}
+
+.sesh-cursor-preview {
+  background: url("/cursors/sesh-pointer.svg") center / contain no-repeat;
+}
+
 input[type="range"] {
   appearance: none;
   height: 4px;
@@ -2160,6 +2221,46 @@ summary {
     animation: none !important;
     transition: none !important;
   }
+}
+
+/* Original SESH cursor set. Every custom asset retains a native fallback. */
+.app[data-cursor="sesh"],
+.config-app[data-cursor="sesh"] {
+  cursor: url("/cursors/sesh-default.svg") 4 4, default;
+}
+
+.app[data-cursor="sesh"] :is(button, a, summary, select, input[type="range"], [role="button"]),
+.config-app[data-cursor="sesh"] :is(button, a, summary, select, input[type="range"], [role="button"]) {
+  cursor: url("/cursors/sesh-pointer.svg") 4 4, pointer;
+}
+
+.app[data-cursor="sesh"] :is(input:not([type="range"]), textarea),
+.config-app[data-cursor="sesh"] :is(input:not([type="range"]), textarea) {
+  cursor: url("/cursors/sesh-text.svg") 16 16, text;
+}
+
+.app[data-cursor="sesh"] :is(button, input, select, textarea):disabled,
+.config-app[data-cursor="sesh"] :is(button, input, select, textarea):disabled {
+  cursor: url("/cursors/sesh-unavailable.svg") 16 16, not-allowed;
+}
+
+.app[data-cursor="sesh"] .foreground,
+.config-app[data-cursor="sesh"] dialog.standalone .dialog-head {
+  cursor: url("/cursors/sesh-grab.svg") 16 15, grab;
+}
+
+.app[data-cursor="sesh"] .foreground:active,
+.config-app[data-cursor="sesh"] dialog.standalone .dialog-head:active {
+  cursor: url("/cursors/sesh-grabbing.svg") 16 15, grabbing;
+}
+
+.app[data-cursor="sesh"] .foreground [data-no-drag] {
+  cursor: url("/cursors/sesh-default.svg") 4 4, default;
+}
+
+.app[data-cursor="sesh"] .foreground button[data-no-drag]:not(:disabled),
+.config-app[data-cursor="sesh"] dialog.standalone .dialog-head button:not(:disabled) {
+  cursor: url("/cursors/sesh-pointer.svg") 4 4, pointer;
 }
 
 /* Axiom-style session calendar: intentionally sparse and data-first. */

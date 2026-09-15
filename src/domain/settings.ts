@@ -54,6 +54,7 @@ export const settingsSchema = z.object({
   position: z.enum(positions).catch("center center"),
   textOpacity: z.number().min(0.6).max(1).catch(1),
   textScale: z.number().min(0.8).max(1.2).catch(1),
+  cursorStyle: z.enum(["system", "sesh"]).catch("sesh"),
   apiKey: z.string().max(128).catch(""),
   username: z.string().trim().min(1).max(24).catch("Editable text"),
   profileImagePath: z.string().nullable().catch(null),

@@ -516,6 +516,7 @@ export default function App({ initial }: { initial: Snapshot }) {
   return (
     <main
       className={`app ${s.compactMode ? "compact" : "normal"}${modeTransition ? ` mode-${modeTransition}` : ""}`}
+      data-cursor={s.cursorStyle}
       style={{ "--text-scale": s.textScale } as CSSProperties}
     >
       {background && (

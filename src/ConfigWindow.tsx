@@ -167,7 +167,7 @@ export default function ConfigWindow({
   };
 
   return (
-    <main className="config-app">
+    <main className="config-app" data-cursor={settings.cursorStyle}>
       {panel === "appearance" ? (
         <Settings
           key={`appearance-${windowRevision}`}

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Image, SlidersHorizontal, Type } from "lucide-react";
+import { Image, MousePointer2, SlidersHorizontal, Type } from "lucide-react";
 import { positions, defaults, type SeshSettings } from "../domain/settings";
 import { Dialog } from "./Dialog";
 
@@ -121,8 +121,32 @@ export function Settings({
                     unit="%"
                     onChange={(v) => update({ textScale: v / 100 })}
                   />
+                  <div className="cursor-setting">
+                    <span>
+                      Cursor style
+                      <small>Choose native behavior or the SESH pointer set.</small>
+                    </span>
+                    <div className="cursor-options" role="group" aria-label="Cursor style">
+                      <button
+                        type="button"
+                        aria-pressed={s.cursorStyle === "system"}
+                        onClick={() => update({ cursorStyle: "system" })}
+                      >
+                        <MousePointer2 aria-hidden="true" />
+                        System
+                      </button>
+                      <button
+                        type="button"
+                        aria-pressed={s.cursorStyle === "sesh"}
+                        onClick={() => update({ cursorStyle: "sesh" })}
+                      >
+                        <span className="sesh-cursor-preview" aria-hidden="true" />
+                        SESH
+                      </button>
+                    </div>
+                  </div>
                   <p className="hint">
-                    Geist, always. Keep your timer clear and readable.
+                    Geist, always. Cursor changes stay inside SESH.
                   </p>
                 </>
               ) : (
@@ -150,7 +174,7 @@ export function Settings({
           <footer className="dialog-foot">
             <button className="text-button" onClick={() => {
               const d = defaults();
-              update({ blur: d.blur, opacity: d.opacity, overlay: d.overlay, fit: d.fit, position: d.position, textOpacity: d.textOpacity, textScale: d.textScale });
+              update({ blur: d.blur, opacity: d.opacity, overlay: d.overlay, fit: d.fit, position: d.position, textOpacity: d.textOpacity, textScale: d.textScale, cursorStyle: d.cursorStyle });
             }}>Reset appearance</button>
             <button className="primary" onClick={close}>Done</button>
           </footer>

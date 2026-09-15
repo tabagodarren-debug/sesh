@@ -75,6 +75,31 @@ test("normal layout has no viewport overflow at supported sizes", async ({
   }
 });
 
+test("the SESH cursor is default and the system cursor preference persists", async ({
+  page,
+}) => {
+  await page.goto("/");
+  await expect(page.locator(".app")).toHaveAttribute("data-cursor", "sesh");
+  const settingsButton = page.getByRole("button", { name: "Settings" });
+  expect(await settingsButton.evaluate((element) => getComputedStyle(element).cursor))
+    .toContain("sesh-pointer.svg");
+
+  await settingsButton.click();
+  await page.getByRole("menuitem", { name: "Appearance" }).click();
+  await page.getByRole("button", { name: "Text", exact: true }).click();
+  await page.getByRole("button", { name: "System", exact: true }).click();
+  await expect(page.locator(".app")).toHaveAttribute("data-cursor", "system");
+  expect(
+    await page
+      .getByRole("button", { name: "Done", exact: true })
+      .evaluate((element) => getComputedStyle(element).cursor),
+  ).toBe("pointer");
+
+  await page.waitForTimeout(250);
+  await page.reload();
+  await expect(page.locator(".app")).toHaveAttribute("data-cursor", "system");
+});
+
 test("background selection and compact mode preserve the same timer", async ({
   page,
 }) => {
