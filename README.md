@@ -66,4 +66,8 @@ Issues and pull requests are welcome. Before submitting a change, run the valida
 
 ## License
 
-SESH is available under the [MIT License](LICENSE).
+SESH source code is available under the [MIT License](LICENSE).
+
+The bundled Bibata Modern Ice cursor artwork is copyright Abdulkaiz Khatri and
+licensed separately under GPL-3.0. See [Third-party notices](THIRD_PARTY_NOTICES.md)
+and the [bundled Bibata license](public/cursors/bibata-modern-ice/LICENSE).

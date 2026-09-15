@@ -155,7 +155,7 @@ export async function prepareShareCard(
 
     context.save();
     context.beginPath();
-    context.rect(52, 680, 69, 69);
+    context.roundRect(52, 680, 69, 69, 3);
     context.clip();
     if (profile) context.drawImage(profile, 52, 680, 69, 69);
     else {
@@ -171,8 +171,8 @@ export async function prepareShareCard(
     }
     context.restore();
     text(context, data.username, 145, 735, 57, 700);
-    drawGlobe(context, 52, 774, 22);
-    text(context, "sesh.timer", 80, 793, 23, 570);
+    drawGlobe(context, 52, 778, 18);
+    text(context, "sesh.timer", 76, 793, 23, 570);
     text(context, data.quote, 270, 793, 22, 560);
 
     context.strokeStyle = "#ffffff2e";

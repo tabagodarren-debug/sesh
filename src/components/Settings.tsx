@@ -124,7 +124,7 @@ export function Settings({
                   <div className="cursor-setting">
                     <span>
                       Cursor style
-                      <small>Choose native behavior or the SESH pointer set.</small>
+                      <small>Choose native behavior or Bibata Modern Ice.</small>
                     </span>
                     <div className="cursor-options" role="group" aria-label="Cursor style">
                       <button
@@ -137,11 +137,11 @@ export function Settings({
                       </button>
                       <button
                         type="button"
-                        aria-pressed={s.cursorStyle === "sesh"}
-                        onClick={() => update({ cursorStyle: "sesh" })}
+                        aria-pressed={s.cursorStyle === "bibata"}
+                        onClick={() => update({ cursorStyle: "bibata" })}
                       >
-                        <span className="sesh-cursor-preview" aria-hidden="true" />
-                        SESH
+                        <span className="bibata-cursor-preview" aria-hidden="true" />
+                        Bibata Ice
                       </button>
                     </div>
                   </div>

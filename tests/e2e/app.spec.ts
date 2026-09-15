@@ -75,14 +75,14 @@ test("normal layout has no viewport overflow at supported sizes", async ({
   }
 });
 
-test("the SESH cursor is default and the system cursor preference persists", async ({
+test("the Bibata cursor is default and the system cursor preference persists", async ({
   page,
 }) => {
   await page.goto("/");
-  await expect(page.locator(".app")).toHaveAttribute("data-cursor", "sesh");
+  await expect(page.locator(".app")).toHaveAttribute("data-cursor", "bibata");
   const settingsButton = page.getByRole("button", { name: "Settings" });
   expect(await settingsButton.evaluate((element) => getComputedStyle(element).cursor))
-    .toContain("sesh-pointer.svg");
+    .toContain("bibata-modern-ice/Link.cur");
 
   await settingsButton.click();
   await page.getByRole("menuitem", { name: "Appearance" }).click();

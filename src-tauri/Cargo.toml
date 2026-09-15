@@ -1,6 +1,6 @@
 [package]
 name = "sesh"
-version = "0.1.10"
+version = "0.1.11"
 description = "A quiet place for your time"
 edition = "2021"
 

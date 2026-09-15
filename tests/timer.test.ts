@@ -162,6 +162,10 @@ describe("session stopwatch", () => {
   it("recovers defaults and rejects malformed timer state", () => {
     expect(restore(null).timer.status).toBe("idle");
     expect(restore(null).settings.username).toBe("Editable text");
+    expect(restore(null).settings.cursorStyle).toBe("bibata");
+    expect(
+      restore({ settings: { cursorStyle: "sesh" } }).settings.cursorStyle,
+    ).toBe("bibata");
     expect(
       restore({ timer: { ...idle(), status: "running" } }).timer.status,
     ).toBe("idle");
