@@ -37,9 +37,60 @@ let changing = false;
 let saveTimer: ReturnType<typeof setTimeout> | undefined;
 const normalSize = { width: 840, height: 570, minWidth: 700, minHeight: 475 };
 const compactSize = { width: 680, height: 140, minWidth: 420, minHeight: 88 };
+const maxStoredDimension = 16_384;
 
 function dimensions(compact: boolean) {
   return compact ? compactSize : normalSize;
+}
+
+export function restoredWindowSize(
+  bounds: Pick<Bounds, "width" | "height"> | null,
+  target: ReturnType<typeof dimensions>,
+) {
+  if (
+    !bounds ||
+    !Number.isFinite(bounds.width) ||
+    !Number.isFinite(bounds.height) ||
+    bounds.width <= 0 ||
+    bounds.height <= 0
+  ) {
+    return null;
+  }
+  return {
+    width: Math.max(target.minWidth, Math.min(bounds.width, maxStoredDimension)),
+    height: Math.max(target.minHeight, Math.min(bounds.height, maxStoredDimension)),
+  };
+}
+
+function storageKey(compact: boolean) {
+  return `sesh-window-${compact ? "compact" : "normal"}`;
+}
+
+async function captureBounds(
+  window: ReturnType<typeof getCurrentWindow>,
+  compact: boolean,
+) {
+  const [position, size, scale, monitors] = await Promise.all([
+    window.outerPosition(),
+    window.innerSize(),
+    window.scaleFactor(),
+    availableMonitors(),
+  ]);
+  localStorage.setItem(
+    storageKey(compact),
+    JSON.stringify({
+      x: position.x,
+      y: position.y,
+      width: size.width / scale,
+      height: size.height / scale,
+      monitor:
+        monitors.find(
+          (monitor) =>
+            position.x >= monitor.position.x &&
+            position.x < monitor.position.x + monitor.size.width,
+        )?.name ?? null,
+    } satisfies Bounds),
+  );
 }
 
 async function applyNativeMode(
@@ -58,27 +109,18 @@ export async function initWindow(compact: boolean, top: boolean) {
   const w = getCurrentWindow();
   mode = compact;
   const target = dimensions(compact);
-  const key = () => `sesh-window-${mode ? "compact" : "normal"}`;
   // React has already hydrated the persisted snapshot by the time this effect
   // runs, so showing here cannot expose an incorrect timer frame.
   await w.show();
   try {
     await w.setAlwaysOnTop(top);
     const b = JSON.parse(
-      localStorage.getItem(key()) ?? "null",
+      localStorage.getItem(storageKey(compact)) ?? "null",
     ) as Bounds | null;
-    if (
-      b &&
-      Number.isFinite(b.width) &&
-      Number.isFinite(b.height) &&
-      b.width >= target.minWidth &&
-      b.height >= target.minHeight
-    ) {
-      await applyNativeMode(compact, {
-        width: Math.max(target.minWidth, Math.min(b.width, 1600)),
-        height: Math.max(target.minHeight, Math.min(b.height, 1200)),
-      });
-      if (safeBounds(b, await availableMonitors()))
+    const restored = restoredWindowSize(b, target);
+    if (restored) {
+      await applyNativeMode(compact, restored);
+      if (b && safeBounds(b, await availableMonitors()))
         await w.setPosition(new PhysicalPosition(b.x, b.y));
       else await w.center();
     } else {
@@ -96,29 +138,13 @@ export async function initWindow(compact: boolean, top: boolean) {
     await w.show();
   }
   const save = () => {
+    if (changing) return;
+    const eventMode = mode;
     clearTimeout(saveTimer);
     saveTimer = setTimeout(async () => {
       if (changing) return;
       try {
-        const [p, s, scale, monitors] = await Promise.all([
-          w.outerPosition(),
-          w.innerSize(),
-          w.scaleFactor(),
-          availableMonitors(),
-        ]);
-        localStorage.setItem(
-          key(),
-          JSON.stringify({
-            x: p.x,
-            y: p.y,
-            width: s.width / scale,
-            height: s.height / scale,
-            monitor:
-              monitors.find(
-                (m) => p.x >= m.position.x && p.x < m.position.x + m.size.width,
-              )?.name ?? null,
-          }),
-        );
+        await captureBounds(w, eventMode);
       } catch {
         /* A closing window cannot be queried. */
       }
@@ -134,33 +160,26 @@ export async function initWindow(compact: boolean, top: boolean) {
 }
 export async function setCompact(compact: boolean) {
   if (!native) return;
-  changing = true;
   const previousMode = mode;
+  const w = getCurrentWindow();
+  clearTimeout(saveTimer);
+  // Persist the outgoing mode immediately. A quick mode switch used to cancel
+  // the debounced resize save and lose the user's last compact bounds.
   try {
-    const w = getCurrentWindow();
+    await captureBounds(w, previousMode);
+  } catch {
+    // A transient bounds read must not prevent the user from switching modes.
+  }
+  changing = true;
+  try {
     const target = dimensions(compact);
     let b: Bounds | null = null;
     try {
       b = JSON.parse(
-        localStorage.getItem(`sesh-window-${compact ? "compact" : "normal"}`) ??
-          "null",
+        localStorage.getItem(storageKey(compact)) ?? "null",
       );
     } catch {}
-    const storedIsUsable =
-      b &&
-      Number.isFinite(b.width) &&
-      Number.isFinite(b.height) &&
-      b.width >= target.minWidth &&
-      b.height >= target.minHeight;
-    await applyNativeMode(
-      compact,
-      storedIsUsable
-        ? {
-            width: Math.min(b!.width, 2400),
-            height: Math.min(b!.height, 1400),
-          }
-        : target,
-    );
+    await applyNativeMode(compact, restoredWindowSize(b, target) ?? target);
     if (b && safeBounds(b, await availableMonitors())) {
       await w.setPosition(new PhysicalPosition(b.x, b.y));
     }
