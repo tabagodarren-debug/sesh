@@ -172,11 +172,28 @@ small {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  cursor: grab;
   user-select: none;
   transition:
     opacity 180ms var(--ease-out),
     transform 220ms var(--ease-soft);
   transform-origin: center;
+}
+
+.foreground:active {
+  cursor: grabbing;
+}
+
+.foreground [data-no-drag] {
+  cursor: default;
+}
+
+.foreground button[data-no-drag]:not(:disabled) {
+  cursor: pointer;
+}
+
+.foreground button[data-no-drag]:disabled {
+  cursor: not-allowed;
 }
 
 .app.mode-contracting .foreground,
