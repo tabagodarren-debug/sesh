@@ -502,14 +502,20 @@ export default function App({ initial }: { initial: Snapshot }) {
     }
   };
 
-  const handleDrag = (event: React.MouseEvent<HTMLElement>) => {
+  const handleDrag = async (event: React.MouseEvent<HTMLElement>) => {
     if (
       event.button === 0 &&
       !(event.target as HTMLElement).closest(
         "button,input,select,textarea,a,summary,[data-no-drag]",
       )
     ) {
-      drag();
+      const region = event.currentTarget;
+      region.dataset.windowDragging = "true";
+      try {
+        await drag();
+      } finally {
+        delete region.dataset.windowDragging;
+      }
     }
   };
 

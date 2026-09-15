@@ -264,6 +264,6 @@ export async function quit() {
   await flushStorage();
   if (native) await invoke("quit_app");
 }
-export function drag() {
-  if (native) void getCurrentWindow().startDragging();
+export async function drag() {
+  if (native) await getCurrentWindow().startDragging();
 }

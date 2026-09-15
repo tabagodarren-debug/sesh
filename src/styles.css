@@ -2223,52 +2223,19 @@ summary {
   }
 }
 
-/* Bibata Modern Ice cursor set. Every custom asset retains a native fallback. */
+/* Fixed-size Bibata Modern Ice cursors: arrow everywhere, closed hand while dragging. */
 .app[data-cursor="bibata"],
-.config-app[data-cursor="bibata"] {
-  cursor: url("/cursors/bibata-modern-ice/Pointer.cur"),
-    url("/cursors/bibata-modern-ice/left_ptr.png") 7 2, default;
+.app[data-cursor="bibata"] *,
+.config-app[data-cursor="bibata"],
+.config-app[data-cursor="bibata"] * {
+  cursor: url("/cursors/bibata-modern-ice/left_ptr.png") 5 2, default !important;
 }
 
-.app[data-cursor="bibata"] :is(button, a, summary, select, input[type="range"], [role="button"]),
-.config-app[data-cursor="bibata"] :is(button, a, summary, select, input[type="range"], [role="button"]) {
-  cursor: url("/cursors/bibata-modern-ice/Link.cur"),
-    url("/cursors/bibata-modern-ice/hand2.png") 14 2, pointer;
-}
-
-.app[data-cursor="bibata"] :is(input:not([type="range"]), textarea),
-.config-app[data-cursor="bibata"] :is(input:not([type="range"]), textarea) {
-  cursor: url("/cursors/bibata-modern-ice/Text.cur"),
-    url("/cursors/bibata-modern-ice/xterm.png") 16 16, text;
-}
-
-.app[data-cursor="bibata"] :is(button, input, select, textarea):disabled,
-.config-app[data-cursor="bibata"] :is(button, input, select, textarea):disabled {
-  cursor: url("/cursors/bibata-modern-ice/Unavailable.cur"),
-    url("/cursors/bibata-modern-ice/crossed_circle.png") 16 16, not-allowed;
-}
-
-.app[data-cursor="bibata"] .foreground,
-.config-app[data-cursor="bibata"] dialog.standalone .dialog-head {
-  cursor: url("/cursors/bibata-modern-ice/Pan.cur"),
-    url("/cursors/bibata-modern-ice/hand1.png") 18 10, grab;
-}
-
-.app[data-cursor="bibata"] .foreground:active,
-.config-app[data-cursor="bibata"] dialog.standalone .dialog-head:active {
-  cursor: url("/cursors/bibata-modern-ice/Grabbing.cur"),
-    url("/cursors/bibata-modern-ice/grabbing.png") 16 8, grabbing;
-}
-
-.app[data-cursor="bibata"] .foreground [data-no-drag] {
-  cursor: url("/cursors/bibata-modern-ice/Pointer.cur"),
-    url("/cursors/bibata-modern-ice/left_ptr.png") 7 2, default;
-}
-
-.app[data-cursor="bibata"] .foreground button[data-no-drag]:not(:disabled),
-.config-app[data-cursor="bibata"] dialog.standalone .dialog-head button:not(:disabled) {
-  cursor: url("/cursors/bibata-modern-ice/Link.cur"),
-    url("/cursors/bibata-modern-ice/hand2.png") 14 2, pointer;
+.app[data-cursor="bibata"] .foreground[data-window-dragging="true"],
+.app[data-cursor="bibata"] .foreground[data-window-dragging="true"]:not([data-no-drag]),
+.config-app[data-cursor="bibata"] dialog.standalone .dialog-head:active,
+.config-app[data-cursor="bibata"] dialog.standalone .dialog-head:active [data-tauri-drag-region] {
+  cursor: url("/cursors/bibata-modern-ice/grabbing.png") 12 6, grabbing !important;
 }
 
 /* Axiom-style session calendar: intentionally sparse and data-first. */

@@ -82,7 +82,7 @@ test("the Bibata cursor is default and the system cursor preference persists", a
   await expect(page.locator(".app")).toHaveAttribute("data-cursor", "bibata");
   const settingsButton = page.getByRole("button", { name: "Settings" });
   expect(await settingsButton.evaluate((element) => getComputedStyle(element).cursor))
-    .toContain("bibata-modern-ice/Link.cur");
+    .toContain("bibata-modern-ice/left_ptr.png");
 
   await settingsButton.click();
   await page.getByRole("menuitem", { name: "Appearance" }).click();
