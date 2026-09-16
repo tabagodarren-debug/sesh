@@ -509,12 +509,10 @@ export default function App({ initial }: { initial: Snapshot }) {
         "button,input,select,textarea,a,summary,[data-no-drag]",
       )
     ) {
-      const region = event.currentTarget;
-      region.dataset.windowDragging = "true";
       try {
         await drag();
-      } finally {
-        delete region.dataset.windowDragging;
+      } catch {
+        notify("Could not move the window.");
       }
     }
   };
@@ -724,7 +722,10 @@ export default function App({ initial }: { initial: Snapshot }) {
               <h1>ELAPSED</h1>
               <div
                 className="elapsed-block"
+                data-no-drag
                 role="timer"
+                title="Double-click to enter compact mode"
+                onDoubleClick={() => void toggleCompact()}
                 aria-label={`Elapsed time ${formatElapsed(timerMetrics.elapsed)}`}
               >
                 {elapsedText}

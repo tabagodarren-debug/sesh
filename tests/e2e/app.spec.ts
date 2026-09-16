@@ -100,6 +100,22 @@ test("the Bibata cursor is default and the system cursor preference persists", a
   await expect(page.locator(".app")).toHaveAttribute("data-cursor", "system");
 });
 
+test("grabbing cursor lasts until left-button release, not drag acceptance", async ({ page }) => {
+  await page.goto("/");
+  await page.mouse.move(500, 250);
+  await page.mouse.down();
+  // Handing input to a native move loop can cancel the DOM pointer without releasing it.
+  await page.evaluate(() => window.dispatchEvent(new PointerEvent("pointercancel")));
+  await page.waitForTimeout(300);
+  await expect(page.locator("html")).toHaveAttribute("data-window-dragging", "true");
+  expect(await page.locator(".foreground").evaluate(el => getComputedStyle(el).cursor))
+    .toContain("grabbing.png");
+  await page.mouse.up();
+  await expect(page.locator("html")).not.toHaveAttribute("data-window-dragging", "true");
+  expect(await page.locator(".foreground").evaluate(el => getComputedStyle(el).cursor))
+    .toContain("left_ptr.png");
+});
+
 test("background selection and compact mode preserve the same timer", async ({
   page,
 }) => {
@@ -122,6 +138,15 @@ test("background selection and compact mode preserve the same timer", async ({
   await expect(page.locator(".compact-content")).toBeVisible();
   await page.keyboard.press("c");
   await expect(page.getByRole("timer")).toHaveText("+0:00:05");
+});
+
+test("double-clicking the timer toggles normal and compact modes", async ({ page }) => {
+  await page.goto("/");
+  await page.locator(".elapsed-block").dblclick();
+  await expect(page.locator(".app")).toHaveClass(/compact/);
+  await page.locator(".compact-time").dblclick();
+  await expect(page.locator(".app")).toHaveClass(/normal/);
+  await expect(page.locator("html")).not.toHaveAttribute("data-window-dragging", "true");
 });
 
 test("Wallhaven reports a helpful fallback outside the native app", async ({

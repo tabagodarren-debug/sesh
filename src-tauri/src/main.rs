@@ -10,6 +10,23 @@ use std::{
 use tauri::Manager;
 
 struct DiskLock(Mutex<()>);
+
+#[tauri::command]
+fn left_mouse_button_pressed() -> Option<bool> {
+    #[cfg(target_os = "windows")]
+    {
+        #[link(name = "user32")]
+        extern "system" {
+            fn GetAsyncKeyState(key: i32) -> i16;
+        }
+        // Native move loops consume DOM mouse-up events. Read the actual button state.
+        Some(unsafe { GetAsyncKeyState(0x01) } < 0)
+    }
+    #[cfg(not(target_os = "windows"))]
+    {
+        None
+    }
+}
 fn root(app: &tauri::AppHandle) -> Result<PathBuf, String> {
     let p = app
         .path()
@@ -810,6 +827,7 @@ fn main() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            left_mouse_button_pressed,
             set_window_mode,
             quit_app,
             wallpaper_engine_library,

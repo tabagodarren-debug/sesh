@@ -264,6 +264,51 @@ export async function quit() {
   await flushStorage();
   if (native) await invoke("quit_app");
 }
+let finishDrag: (() => void) | undefined;
+
+export function trackWindowDrag() {
+  finishDrag?.();
+  document.documentElement.dataset.windowDragging = "true";
+  let active = true;
+  let poll: ReturnType<typeof setTimeout> | undefined;
+  const finish = () => {
+    active = false;
+    clearTimeout(poll);
+    delete document.documentElement.dataset.windowDragging;
+    window.removeEventListener("mouseup", finish);
+    window.removeEventListener("pointerup", finish);
+    window.removeEventListener("mousemove", reconcileButtons);
+    if (finishDrag === finish) finishDrag = undefined;
+  };
+  const reconcileButtons = (event: MouseEvent) => {
+    if (!(event.buttons & 1)) finish();
+  };
+  const checkNativeButton = async () => {
+    try {
+      const pressed = await invoke<boolean | null>("left_mouse_button_pressed");
+      if (!active) return;
+      if (pressed === false) return finish();
+      if (pressed === null) return;
+      poll = setTimeout(() => void checkNativeButton(), 50);
+    } catch {
+      // DOM release events remain available if the native check fails.
+    }
+  };
+  finishDrag = finish;
+  window.addEventListener("mouseup", finish);
+  window.addEventListener("pointerup", finish);
+  window.addEventListener("mousemove", reconcileButtons);
+  if (native) poll = setTimeout(() => void checkNativeButton(), 50);
+  return finish;
+}
+
 export async function drag() {
-  if (native) await getCurrentWindow().startDragging();
+  const finish = trackWindowDrag();
+  try {
+    if (native) await getCurrentWindow().startDragging();
+  } catch (error) {
+    finish();
+    throw error;
+  }
+  // startDragging resolves on acceptance. Only a button release ends the cursor state.
 }

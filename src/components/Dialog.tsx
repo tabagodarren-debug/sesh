@@ -7,6 +7,7 @@ import {
   type ReactNode,
 } from "react";
 import { X } from "lucide-react";
+import { trackWindowDrag } from "../services/window";
 
 type DialogChildren = ReactNode | ((close: () => void) => ReactNode);
 
@@ -78,7 +79,13 @@ export function Dialog({
         }
       }}
     >
-      <div className="dialog-head" data-tauri-drag-region={standalone || undefined}>
+      <div className="dialog-head" data-tauri-drag-region={standalone || undefined}
+        onMouseDown={(event) => {
+          if (standalone && event.button === 0 &&
+              !(event.target as HTMLElement).closest("button,input,select,textarea,a")) {
+            trackWindowDrag();
+          }
+        }}>
         <div className="dialog-title" data-tauri-drag-region={standalone || undefined}>
           {variant === "default" ? (
             <span className="dialog-brand" aria-hidden="true">

@@ -2231,10 +2231,10 @@ summary {
   cursor: url("/cursors/bibata-modern-ice/left_ptr.png") 5 2, default !important;
 }
 
-.app[data-cursor="bibata"] .foreground[data-window-dragging="true"],
-.app[data-cursor="bibata"] .foreground[data-window-dragging="true"]:not([data-no-drag]),
-.config-app[data-cursor="bibata"] dialog.standalone .dialog-head:active,
-.config-app[data-cursor="bibata"] dialog.standalone .dialog-head:active [data-tauri-drag-region] {
+html[data-window-dragging="true"] .app[data-cursor="bibata"],
+html[data-window-dragging="true"] .app[data-cursor="bibata"] *,
+html[data-window-dragging="true"] .config-app[data-cursor="bibata"],
+html[data-window-dragging="true"] .config-app[data-cursor="bibata"] * {
   cursor: url("/cursors/bibata-modern-ice/grabbing.png") 12 6, grabbing !important;
 }
 
